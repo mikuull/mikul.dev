@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Navbar from "./Navbar";
+import MobileNavbar from "./MobileNavbar";
 
 const Header = () => {
   return (
@@ -22,7 +23,9 @@ const Header = () => {
             </Link>
           </div>
 
-          <div className="xl hidden"></div>
+          <div className="xl:hidden">
+            <MobileNavbar />
+          </div>
         </div>
       </header>
     </>
