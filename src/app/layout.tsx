@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={jetbrains_mono.className}>{children}</body>
+    <html lang="en" className={jetbrains_mono.className}>
+      <body>{children}</body>
     </html>
   );
 }
