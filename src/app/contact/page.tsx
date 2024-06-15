@@ -1,9 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.NEXT_EMAIL_API_KEY);
 
 import {
   Select,
@@ -44,6 +47,38 @@ const info = [
 import { motion } from "framer-motion";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: "mmikulski643@gmail.com",
+        subject: "Email from mikul.dev",
+        html: `<p>Email od: <strong>${formData.email}</strong> </br> Imię: <strong>${formData.name}</strong> </br> Nazwisko: <strong>${formData.surname}</strong> </br> Treść: <strong>${formData.message}</strong></p>`,
+      });
+      //email sent successfully
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <motion.section
@@ -57,16 +92,34 @@ const Contact = () => {
         <div className="container mx-auto">
           <div className="flex flex-col xl:flex-row gap-[30px]">
             <div className="xl:h-[54%] order-2 xl:order-none">
-              <form className="flex flex-col gap-6 p-10 bg-[#27272c] rounded-xl">
+              <form
+                className="flex flex-col gap-6 p-10 bg-[#27272c] rounded-xl"
+                onSubmit={handleSubmit}
+              >
                 <h3 className="text-4xl text-accent">Let's work together</h3>
                 <p className="text-white/60">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
                   ea vel commodi cumque et?
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input type="firstname" placeholder="First name" />
-                  <Input type="lastname" placeholder="Last name" />
-                  <Input type="email" placeholder="Email" />
+                  <Input
+                    type="firstname"
+                    id={"name"}
+                    placeholder="First name"
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="lastname"
+                    id={"surname"}
+                    placeholder="Last name"
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="email"
+                    id={"email"}
+                    placeholder="Email"
+                    onChange={handleChange}
+                  />
                 </div>
                 <Select>
                   <SelectTrigger className="w-full">
@@ -83,7 +136,9 @@ const Contact = () => {
                 </Select>
                 <Textarea
                   className="h-[200px]"
+                  id={"message"}
                   placeholder="Type your message here"
+                  onChange={handleChange}
                 />
                 <Button
                   size={"lg"}
